@@ -29,9 +29,9 @@ CREATE TABLE employee (
 select * from role cross join employee;
 
 -- replace into employee(first_name, last_name)
--- values("Mario", "Kozic"),
--- ("Tomislav", "Kozic"),
--- ("Marko", "Dundovic"),
--- ("Denis", "Demirovski");
+-- values("Andrew", "Souza"),
+-- ("Tom", "Cruise"),
+-- ("Bobby", "Shmurda"),
+-- ("Travis", "Scott");
 
 

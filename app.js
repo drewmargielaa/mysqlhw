@@ -1,17 +1,13 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 
-// ovdje cemo deklarirati variablu connection i definirati je tako da cemo ugadenom funkcijom mysql.createConnection gdje smo konfigurirali svojstva port, user, password i database
-
 const connection = mysql.createConnection({
     port: 3306,
     user: "root",
     password: "rootpass",
     database: "employee_tracker"
 });
-// console.log("linija 12  " + connection)
 
-// zatim smo ponovno pozvali variablu connection te metodom       .connect()  definirali anonimnu funkciju da nam vrati greskuako je greska istinita
 
 connection.connect(function(err){
     if(err){
@@ -20,7 +16,6 @@ connection.connect(function(err){
 });
 
 
-// //ovdje smo pozvali funkciju kojom cemo izabrati hocemo li dodati isprintati, update ili izaci iz programa
 startApp();
 
 function startApp(){
@@ -57,7 +52,6 @@ function startApp(){
     
 }
 
-// // ovdje cemo napraviti funkciju kojom cemo dodati zaposlenika
 
 function add(){
     inquirer.prompt({
@@ -67,20 +61,7 @@ function add(){
         choices: ["department", "role", "employee"]
 
     })
-    // .then(function({db}){
-    //     console.log(db)
-    //     switch(db){
-    //         case "department":
-    //             add_department();
-    //             break;
-    //         case "role":
-    //             add_role();
-    //             break;
-    //         case "employee":
-    //             add_employee();
-    //             break;
-    //     }
-    // })
+ 
     .then(res =>{
         console.log(res)
         switch (res.db) {
@@ -99,7 +80,7 @@ function add(){
 }
 
 
- //ovdje cemo otvoriti funkciju u slucaju da korisnik odabere add department
+
 
 function add_department(){
     inquirer.prompt(
@@ -110,28 +91,17 @@ function add_department(){
         }
 
     )
-    // .then(function({name}){
-    //     connection.query(`insert into department (name) values ("${name}")`, function(err, data){
-    //         if(err){
-    //             throw err;
 
-    //         }
-
-    //         console.log("Department added")
-    //         console.log(data)
-    //     })
-    // })
     .then(res =>{
         connection.query(`insert into department (department_name) values ('${res.department_name}')`, function(err, data){
             if(err) throw err;
             console.log("Department added")
-            // console.log(data)
+            
 
         });
     });
 };
  
-//  // ovdje cemo otvoriti funkciju koja u slucaju da korisnik odabere add_role
 
  function add_role(){
      let departments = [];
@@ -161,17 +131,6 @@ function add_department(){
                  choices: departments
              }
          ])
-//         //  .then(function({position, salary, department_id}){
-
-//         //      let index = departments.indexOf(department_id);
-//         //      connection.query(`insert into role(title, salary, department_id) values ("${position}", "${salary}", "${index}")`, function(err, data){
-//         //          if(err){
-//         //              throw err;
-
-//         //          }
-//         //      })
-
-//         //  })
         .then(res =>{
             let deptIndex = departments.indexOf(res.department_id);
             connection.query(`insert into role(title, salary, department_id) values ("${res.position}", "${res.salary}", "${deptIndex}")`, function(err, data){
@@ -184,7 +143,7 @@ function add_department(){
      })
  }
 
-//  // ovdje cemo staviti funkciju kojom dodajemo zaposlenike i pozicije na kojima rade
+
 
  function add_employee(){
     let employees = [];
@@ -195,7 +154,7 @@ function add_department(){
             employees.push(data[i]);
             roles.push(data[i].role_id);
         }
-         //console.table(employees)
+         
 
          inquirer.prompt([
              {
@@ -215,30 +174,10 @@ function add_department(){
                  choices: roles
 
              }
-            //  {
-            //      name: "managerID",
-            //      message:"Who is your department head?",
-            //      type: "list",
-            //      choices:["none"].concat(employees)
-
-            //  }
+    
          ])
-        //  .then(function({first_name, last_name, role_id, manager_id}){
-        //      let queryTxt = `insert into employee(first_name, last_name, role_id)`;
-        //      if(manager_id != "none"){
-        //          queryTxt += `values ("${first_name}", "${last_name}", ${roles.indexOf(role_id)}`;
-        //      }
-        //      console.log(queryTxt)
-
-        //      connection.query(queryTxt, function(err, data){
-        //          if(err) throw err;
-        //          console.table(data)
-        //         //  getJob();
-        //      })
-        //  })
         .then(res =>{ 
-            // let roleIndex = roles.indexOf(res.role_id);
-            // console.log(roleIndex)
+          
             connection.query(`insert into employee(first_name, last_name, role_id) values ("${res.first_name}", "${res.last_name}", "${res.role}")`, function(err, data){
                 if(err) throw err;
                 // console.log(res, data, roleIndex)
@@ -249,7 +188,6 @@ function add_department(){
         });
     }
 
-    // ovdje cemo staviti funkciju ako korisnik odabere pregled
 
     function view(){
         inquirer.prompt(
@@ -260,15 +198,6 @@ function add_department(){
                 choices: ["department", "role", "employee"]
             }
         )
-//         // .then(function({db}){
-//         //     connection.query(`select * from ${db}`, function(err, data){
-//         //         if(err){
-//         //             throw err;
-//         //         }
-//         //         console.table(data)
-//         //     })
-
-//         // })
         .then(res =>{
             switch (res.db) {
                 case "department":
@@ -318,13 +247,10 @@ function add_department(){
 
             }
         })
-        // connection.query(`select department_name from department inner join role on department.department_id = role.department_id;`, function(err, data){
-        //     if(err) throw err;
-        //     console.table(data)
-        // })
+       
     }
 
-    //ovdje cemo otvoriti funkciju za update 
+     
 
     function update(){
         inquirer.prompt(
@@ -347,7 +273,7 @@ function add_department(){
         })
     }
 
-    //ovdje cemo otvoriti funkciju za update role
+  
 
      function update_role(){
          connection.query(`SELECT employee.employee_id, employee.first_name, employee.role_id, employee.last_name, role.title, role.department_id, department_name AS department, role.salary FROM employee LEFT JOIN role on employee.role_id = role.role_id LEFT JOIN department on role.department_id = department.department_id ;`, function(err,data, field){
@@ -405,10 +331,6 @@ function add_department(){
          });
      };
 
-// console.log(employees);
-
-//ovdje cemo otvoriti funkciju za manager update
-
     function update_manager(){
 
 
@@ -436,22 +358,6 @@ function add_department(){
                 }
 
             ])
-            // .then(({employee_id, manager_id}) => {
-
-            //     let queryTxt = "";
-            //     if(manager_id !== "none"){
-            //         queryTxt = `update employee set manager_id = ${employees.indexOf(manager_id) + 1} where id = ${employees.indexOf(employee_id) + 1}`
-            //     } else {
-            //         queryTxt = `update employee set manager_id = ${null} where id = ${employees.indexOf(employee_id) + 1}`
-            //     }
-
-            //     connection.query(queryTxt, function(err, data){
-            //         if(err){
-            //             throw err;
-            //         }
-            //         // getJob();
-            //     })
-            // })
             .then(res =>{
                 if(employees.includes(res.manager_id)){
                     console.log(res)
@@ -462,10 +368,6 @@ function add_department(){
 
     function remove(){
         console.log("hello");
-        // delete department
-        // delete role
-        // delete employee
-        // var department = [];
         inquirer.prompt({
             name:"deleteOptions",
             message:"What would you like to remove?",
@@ -510,24 +412,7 @@ function add_department(){
             connection.query(`DELETE FROM department where department_name = "${res.deptRemoval}"`);
             console.log("Department was successfully removed")
             connection.end();
-
-            // switch (res.deptRemoval) {
-            //     case "Research":
-            //         connection.query(`DELETE FROM department where department_id = 3`);
-            //         console.log("Department was successfully removed")
-            //         connection.end();
-
-            //     case "Accounting":
-            //         connection.query(`DELETE FROM department where department_id = 2`);
-            //         console.log("Department was successfully removed")
-            //         connection.end();
-
-            //     case "Development":
-            //         connection.query(`DELETE FROM department where department_id = 1`);
-            //         console.log("Department was successfully removed")
-            //         connection.end();
-
-            // };
+        };
         });
 
     });
@@ -555,101 +440,33 @@ function add_department(){
                 connection.query(`DELETE FROM role where title = "${res.roleRemoval}"`);
                 console.log("Role was successfully removed")
                 connection.end();
-
-            // testing purposes
-            // switch (res.roleRemoval) {
-            //     case "Intern":
-            //         connection.query(`DELETE FROM role where role_id = 3`);
-            //         console.log("Role was successfully removed")
-            //         connection.end();
-
-            //     case "Engineer":
-            //         connection.query(`DELETE FROM role where role_id = 2`);
-            //         console.log("Role was successfully removed")
-            //         connection.end();
-
-            //     case "Manager":
-            //         connection.query(`DELETE FROM role where role_id = 1`);
-            //         console.log("Role was successfully removed")
-            //         connection.end();
-  
-            // };
             })
         });
     };
 
-    function removeEmployee(){
-        connection.query(`SELECT * FROM employee`, function(err, data){
-            var employee = [];
-            if(err) throw err;
-            for(let i = 0; i < data.length; i++){
-                employee.push(data[i].first_name);
-            };
-            console.table(employee)
-        
+function removeEmployee() {
+    connection.query(`SELECT * FROM employee`, function (err, data) {
+        var employee = [];
+        if (err) throw err;
+        for (let i = 0; i < data.length; i++) {
+            employee.push(data[i].first_name);
+        };
+        console.table(employee)
+
         inquirer.prompt({
-            name:"employeeRemoval",
-            message:"Which employee do you wanna remove?",
-            type:"list",
+            name: "employeeRemoval",
+            message: "Which employee do you wanna remove?",
+            type: "list",
             choices: employee
         })
-        .then(res =>{
-            connection.query(`DELETE FROM employee where first_name = "${res.employeeRemoval}"`, function(err, data){
-                if(err) throw err;
-                console.log("You have removed Employee successfully!")
-                connection.end();
+            .then(res => {
+                connection.query(`DELETE FROM employee where first_name = "${res.employeeRemoval}"`, function (err, data) {
+                    if (err) throw err;
+                    console.log("You have removed Employee successfully!")
+                    connection.end();
+                });
             });
-        });
     });
-    }
-       // lines used for testing purposes    
-    //         switch (res.deleteEmployee) {
-    //             case "Marko":
-    //                 connection.query(`DELETE FROM employee where first_name = "Marko"`);
-    //                 console.log("Employee was successfully removed")
-    //                 connection.end();
 
-    //             case "Mario":
-    //                 connection.query(`DELETE FROM employee where first_name = "Mario"`);
-    //                 console.log("Employee was successfully removed")
-    //                 connection.end();
 
-    //             case "Tomislav":
-    //                 connection.query(`DELETE FROM employee where first_name = "Tomislav"`);
-    //                 console.log("Employee was successfully removed")
-    //                 connection.end();
-
-    //             case "Denis":
-    //                 connection.query(`DELETE FROM employee where first_name = "Denis"`);
-    //                 console.log("Employee was successfully removed")
-    //                 connection.end();
-
-    //             case "Filip":
-    //                 connection.query(`DELETE FROM employee where first_name = "Filip"`);
-    //                 console.log("Employee was successfully removed")
-    //                 connection.end();
-
-    //             case "Danijel":
-    //                 connection.query(`DELETE FROM employee where first_name = "Danijel"`);
-    //                 console.log("Employee was successfully removed")
-    //                 connection.end();
-
-    //             case "Jasmin":
-    //                 connection.query(`DELETE FROM employee where first_name = "Jasmin"`);
-    //                 console.log("Employee was successfully removed")
-    //                 connection.end();
-
-    //             case "Robert":
-    //                 connection.query(`DELETE FROM employee where first_name = "Robert"`);
-    //                 console.log("Employee was successfully removed")
-    //                 connection.end();
-
-    //             case "Milan":
-    //                 connection.query(`DELETE FROM employee where first_name = "Milan"`);
-    //                 console.log("Employee was successfully removed")
-    //                 connection.end();
-
-    //         };
-
-    // }) 
     

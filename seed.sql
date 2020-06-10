@@ -13,12 +13,12 @@ values("Accountant", 45000.00, 1),
 ("Helpdesk Tech", 50000,3);
 
 insert into employee(first_name, last_name, role_id)
-values("Mario", "Kozic", 1),
-("Tomislav", "Kozic", 2),
-("Robert", "Maric", 3),
-("Filip", "Jurisic", 4),
-("Ivan", "Loncar", 5),
-("Tod", "Dudek", 6);
+values("Andrew", "Souza", 1),
+("Bobby ", "Shmurda", 2),
+("tom ", "cruise", 3),
+("travis", "scott", 4),
+("M &", "M", 5),
+("Tom", "Wang", 6);
 
 -- INSERT INTO department (department_name)
 -- VALUES ("Develop");
@@ -33,11 +33,12 @@ values("Mario", "Kozic", 1),
 -- INSERT INTO role (title, salary, department_id)
 -- VALUES ("intern", 5000, 3);
 -- INSERT INTO employee (first_name, last_name, role_id)
--- VALUES ("Marko","Dundovic", 2);
+-- VALUES ("Bobby","Shmurda", 2);
 -- INSERT INTO employee (first_name, last_name, role_id, manager_id)
--- VALUES ("Mario", "Kozic", 3, 1);
+-- VALUES ("Andrew", "Souza", 3, 1);
 -- INSERT INTO employee (first_name, last_name, role_id, manager_id)
--- VALUES ("Tomislav", "Kozic", 1, 2);
+-- VALUES ("cruise", "Souza", 1, 2);
 -- INSERT INTO employee (first_name, last_name, role_id)
--- VALUES ("Milan", "Soco", 3);
+-- VALUES ("tom ", "cruise", 3);
+
 
