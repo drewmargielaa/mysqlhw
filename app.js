@@ -109,8 +109,6 @@ function add_department(){
          if(err) throw err;
 
          for(let i = 0; i <data.length; i++){
-             //loop kojim ispisuemo imena svih departmenta
-
              departments.push(data[i].department_name);
          }
          inquirer.prompt([
@@ -135,7 +133,6 @@ function add_department(){
             let deptIndex = departments.indexOf(res.department_id);
             connection.query(`insert into role(title, salary, department_id) values ("${res.position}", "${res.salary}", "${deptIndex}")`, function(err, data){
                 if(err) throw err;
-                // console.log(res, data, deptIndex)
                 console.log("Role successfully added!")
             })
         })
@@ -180,7 +177,6 @@ function add_department(){
           
             connection.query(`insert into employee(first_name, last_name, role_id) values ("${res.first_name}", "${res.last_name}", "${res.role}")`, function(err, data){
                 if(err) throw err;
-                // console.log(res, data, roleIndex)
                 console.log("employee successfully added!")
             });
         });
@@ -278,7 +274,6 @@ function add_department(){
      function update_role(){
          connection.query(`SELECT employee.employee_id, employee.first_name, employee.role_id, employee.last_name, role.title, role.department_id, department_name AS department, role.salary FROM employee LEFT JOIN role on employee.role_id = role.role_id LEFT JOIN department on role.department_id = department.department_id ;`, function(err,data, field){
              if(err) throw err;
-            //  console.log(data,  field)
              var employees = [];
              var roles = [];
              var object = [];
@@ -289,7 +284,6 @@ function add_department(){
                  roles.push(data[i].title) 
                  object.push(data[i].department_id)
                  objectId.push(data[i].role_id)
-                //  console.log(data[i],"aaaaaaaaaaaaaa")
              }
              for(let i = 0; i < data.length; i++){
 
@@ -299,20 +293,20 @@ function add_department(){
              inquirer.prompt([
                  {
                      name:"employeeName",
-                     message:"Wich employee is getting updated",
+                     message:"Employee getting updated? ",
                      type:"list",
                      choices: employees
                  },
                  {
                      name:"role",
-                     message:"What role are you assigning the employee?",
+                     message:"What is the emloyees role?",
                      type:"list",
                      choices: roles
 
                  },
                  {
                      name:"departmentID",
-                     message:"In which department is the new assignment?",
+                     message:"What department is it being assigned?",
                      type:"list",
 
                      choices:["None"].concat(object)
@@ -323,7 +317,7 @@ function add_department(){
                 connection.query(`UPDATE role,employee SET title = "${res.role}", department_id = ${res.departmentID}  WHERE first_name = "${res.employeeName}"`, function(err, data){
                     if(err) throw err;
                     console.table(data)
-                    console.log("Employee updated successfully!")
+                    console.log("Employee info Updated")
                 });
  
              });
@@ -346,13 +340,13 @@ function add_department(){
             inquirer.prompt([
                 {
                     name: "employee_id",
-                    message: "Which employee would you like update?",
+                    message: "Employee getting updated?",
                     type: "list",
                     choices: employees
                 },
                 {
                     name: "manager_id",
-                    message: "Who is the new manager?",
+                    message: "Who is the Manager?",
                     type: "list",
                     choices: ["none"].concat(employees)
                 }
@@ -370,7 +364,7 @@ function add_department(){
         console.log("hello");
         inquirer.prompt({
             name:"deleteOptions",
-            message:"What would you like to remove?",
+            message:"Anything you would like to remove",
             type: "list",
             choices:["Department", "Role", "Employee"]
         })
@@ -403,7 +397,7 @@ function add_department(){
 
         inquirer.prompt({
             name:"deptRemoval",
-            message:"Which department are you removing?",
+            message:"What department is beig removed?",
             type:"list",
             choices: department
         })
@@ -455,14 +449,14 @@ function removeEmployee() {
 
         inquirer.prompt({
             name: "employeeRemoval",
-            message: "Which employee do you wanna remove?",
+            message: "Which employee is being remove?",
             type: "list",
             choices: employee
         })
             .then(res => {
                 connection.query(`DELETE FROM employee where first_name = "${res.employeeRemoval}"`, function (err, data) {
                     if (err) throw err;
-                    console.log("You have removed Employee successfully!")
+                    console.log("Employee successfully removed")
                     connection.end();
                 });
             });
