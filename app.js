@@ -406,13 +406,10 @@ function removeDept() {
                 connection.query(`DELETE FROM department where department_name = "${res.deptRemoval}"`);
                 console.log("Department was successfully removed")
                 connection.end();
-            };
-
+            });
     });
 
-});
-
-    };
+};
 
 function removeRole() {
     connection.query(`SELECT * FROM role`, function (err, data) {
@@ -450,18 +447,17 @@ function removeEmployee() {
 
         inquirer.prompt({
             name: "employeeRemoval",
-            message: "Which employee is being remove?",
+            message: "Which employee is being removed?",
             type: "list",
             choices: employee
         })
             .then(res => {
-                connection.query(`DELETE FROM employee where first_name = "${res.employeeRemoval}"`, function (err, data) {
-                    if (err) throw err;
-                    console.log("Employee successfully removed")
-                    connection.end();
-                });
+                connection.query(`DELETE FROM employee where first_name = "${res.employeeRemoval}"`,
+                    function (err, data) {
+                        if (err) throw err;
+                        console.log("Employee successfully removed")
+                        connection.end();
+                    }
+                );
             });
-    });
-
-};
-
+    })};
