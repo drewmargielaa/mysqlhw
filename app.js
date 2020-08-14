@@ -105,213 +105,202 @@ async function add_role() {
         }
     ])
     let deptIndex = departments.indexOf(res.department_id);
-    return connection.query(`insert into role(title, salary, department_id) values ("${res.position}", "${res.salary}", "${deptIndex}")`,
+    return connection.query(`insert into role(title, salary, department_id) values ("${res.position}", "${res.salary}", "${deptIndex}")`)
+
+}
+
+
+async function add_employee() {
+    let employees = [];
+    let roles = [];
+    connection.query(`select * from employee`)
+
+    await prompt([
+        {
+            name: "first_name",
+            message: "What's is the employees First Name?",
+            type: "input"
+        },
+        {
+            name: "last_name",
+            message: "What's is the employees Last Name?",
+            type: "input"
+        },
+        {
+            name: "role",
+            message: "What is employees role?",
+            type: "list",
+            choices: roles
+
+        }
+
+    ])
+    return connection.query(`insert into employee(first_name, last_name, role_id) values ("${res.first_name}", "${res.last_name}", "${res.role}")`);
+}
+
+
+async function view() {
+    await prompt(
+        {
+            name: "db",
+            message: "What would you like to view?",
+            type: "list",
+            choices: ["department", "role", "employee"]
+        }
+    )
+    switch (res.db) {
+        case "department":
+            return connection.query(`SELECT * FROM department ${res.db};`,)
+        case "role":
+            return connection.query(`SELECT *FROM role ${res.db}`,)
+
+        case "employee":
+            connection.query(`select department_name, first_name, last_name, employee.role_id, role.department_id, title, salary, employee_id from department, role, employee;`,)
+            connection.query(`select * from employee ,department group by department_name  order by role_id; `,)
+    }
+}
+
+async function update() {
+    await prompt(
+        {
+            name: "update",
+            message: "What would you like to update?",
+            type: "list",
+            choices: ["role", "manager"]
+        }
+
+    )
+    switch (update) {
+        case "role":
+            update_role();
+            break;
+        case "manager":
+            update_manager();
+            break;
+    }
+}
 
 
 
-        async function add_employee() {
-            let employees = [];
-            let roles = [];
-            connection.query(`select * from employee`,)
+async function update_role() {
+    connection.query(`SELECT employee.employee_id, employee.first_name, employee.role_id, employee.last_name, role.title, role.department_id, department_name AS department, role.salary FROM employee LEFT JOIN role on employee.role_id = role.role_id LEFT JOIN department on role.department_id = department.department_id ;`,)
+    var employees = [];
+    var roles = [];
+    var object = [];
+    var objectId = [];
 
-            await prompt([
-                {
-                    name: "first_name",
-                    message: "What's is the employees First Name?",
-                    type: "input"
-                },
-                {
-                    name: "last_name",
-                    message: "What's is the employees Last Name?",
-                    type: "input"
-                },
-                {
-                    name: "role",
-                    message: "What is employees role?",
-                    type: "list",
-                    choices: roles
+    for (let i = 0; i < data.length; i++) {
+        employees.push(data[i].first_name);
+        roles.push(data[i].title)
+        object.push(data[i].department_id)
+        objectId.push(data[i].role_id)
+    }
+    for (let i = 0; i < data.length; i++) {
 
-                }
-
-            ])
+    }
 
 
-            return connection.query(`insert into employee(first_name, last_name, role_id) values ("${res.first_name}", "${res.last_name}", "${res.role}")`),
+    await prompt([
+        {
+            name: "employeeName",
+            message: "Employee getting updated? ",
+            type: "list",
+            choices: employees
+        },
+        {
+            name: "role",
+            message: "What is the emloyees role?",
+            type: "list",
+            choices: roles
+
+        },
+        {
+            name: "departmentID",
+            message: "What department is it being assigned?",
+            type: "list",
+
+            choices: ["None"].concat(object)
+        }
+    ])
+    return connection.query(`UPDATE role,employee SET title = "${res.role}", department_id = ${res.departmentID}  WHERE first_name = "${res.employeeName}"`,)
+}
+
+async function update_manager() {
 
 
+    connection.query(`select * from employee`,)
+    await prompt([
+        {
+            name: "employee_id",
+            message: "Employee getting updated?",
+            type: "list",
+            choices: employees
+        },
+        {
+            name: "manager_id",
+            message: "Who is the Manager?",
+            type: "list",
+            choices: ["none"].concat(employees)
+        }
 
-                async function view() {
-                    await prompt(
-                        {
-                            name: "db",
-                            message: "What would you like to view?",
-                            type: "list",
-                            choices: ["department", "role", "employee"]
-                        }
-                    )
-                    switch (res.db) {
-                        case "department":
-                            return connection.query(`SELECT * FROM department ${res.db};`,)
-                            return connection.query(`SELECT employee.employee_id, employee.first_name, employee.last_name, role.title, department_name AS department, role.salary FROM employee LEFT JOIN role on employee.role_id = role.role_id LEFT JOIN department on role.department_id = department.department_id ;`,)
-                            return connection.query(`select (manager_id) = 2, (department_id) =2, first_name, last_name   from employee inner join role;`,)
+    ])
+    if (employees.includes(res.manager_id)) {
+        console.log(res)
+    }
+}
 
-                        case "role":
-                            return connection.query(`SELECT *FROM role ${res.db}`,)
+async function remove() {
+    await prompt({
+        name: "deleteOptions",
+        message: "Anything you would like to remove",
+        type: "list",
+        choices: ["Department", "Role", "Employee"]
+    })
+    switch (res.deleteOptions) {
+        case "Department":
+            removeDept();
+            break;
 
-                            return connection.query(`select title, salary, department_id from role left join employee on role.role_id = employee.role_id;`,)
+        case "Role":
+            removeRole();
+            break;
 
-                            return connection.query(`select first_name, last_name, (manager_id) = 1, 2 from employee left join role on employee.role_id = role.role_id;`,)
+        case "Employee":
+            removeEmployee();
+            break;
+    };
+};
 
-                            return connection.query(`select employee_id, first_name, last_name, manager_id from employee left join role  on employee.role_id = role.role_id where (manager_id) != 0;`,)
+async function removeDept() {
+    connection.query(`SELECT * FROM department`,)
+    await prompt({
+        name: "deptRemoval",
+        message: "What department is beig removed?",
+        type: "list",
+        choices: department
+    })
 
-                        case "employee":
-                            connection.query(`select department_name, first_name, last_name, employee.role_id, role.department_id, title, salary, employee_id from department, role, employee;`,)
-                            connection.query(`select * from employee ,department group by department_name  order by role_id; `,)
-                    }
+    return connection.query(`DELETE FROM department where department_name = "${res.deptRemoval}"`);
 
-                    async function update() {
-                        await prompt(
-                            {
-                                name: "update",
-                                message: "What would you like to update?",
-                                type: "list",
-                                choices: ["role", "manager"]
-                            }
+}
 
-                        )
-                        switch (update) {
-                            case "role":
-                                update_role();
-                                break;
-                            case "manager":
-                                update_manager();
-                                break;
-                        }
+async function removeRole() {
+    connection.query(`SELECT * FROM role`,)
+    await prompt({
+        name: "roleRemoval",
+        message: "Which role do you wanna remove ?",
+        type: "list",
+        choices: role
+    })
+    return connection.query(`DELETE FROM role where title = "${res.roleRemoval}"`)
+};
 
-
-
-
-                        async function update_role() {
-                            connection.query(`SELECT employee.employee_id, employee.first_name, employee.role_id, employee.last_name, role.title, role.department_id, department_name AS department, role.salary FROM employee LEFT JOIN role on employee.role_id = role.role_id LEFT JOIN department on role.department_id = department.department_id ;`,)
-                            var employees = [];
-                            var roles = [];
-                            var object = [];
-                            var objectId = [];
-
-                            for (let i = 0; i < data.length; i++) {
-                                employees.push(data[i].first_name);
-                                roles.push(data[i].title)
-                                object.push(data[i].department_id)
-                                objectId.push(data[i].role_id)
-                            }
-                            for (let i = 0; i < data.length; i++) {
-
-                            }
-
-
-                            await prompt([
-                                {
-                                    name: "employeeName",
-                                    message: "Employee getting updated? ",
-                                    type: "list",
-                                    choices: employees
-                                },
-                                {
-                                    name: "role",
-                                    message: "What is the emloyees role?",
-                                    type: "list",
-                                    choices: roles
-
-                                },
-                                {
-                                    name: "departmentID",
-                                    message: "What department is it being assigned?",
-                                    type: "list",
-
-                                    choices: ["None"].concat(object)
-                                }
-                            ])
-                            return connection.query(`UPDATE role,employee SET title = "${res.role}", department_id = ${res.departmentID}  WHERE first_name = "${res.employeeName}"`,)
-
-
-                            async function update_manager() {
-
-
-                                connection.query(`select * from employee`,)
-                                await prompt([
-                                    {
-                                        name: "employee_id",
-                                        message: "Employee getting updated?",
-                                        type: "list",
-                                        choices: employees
-                                    },
-                                    {
-                                        name: "manager_id",
-                                        message: "Who is the Manager?",
-                                        type: "list",
-                                        choices: ["none"].concat(employees)
-                                    }
-
-                                ])
-                                if (employees.includes(res.manager_id)) {
-                                    console.log(res)
-                                }
-                            }
-                        };
-                    }
-
-                    async function remove() {
-                        await prompt({
-                            name: "deleteOptions",
-                            message: "Anything you would like to remove",
-                            type: "list",
-                            choices: ["Department", "Role", "Employee"]
-                        })
-                        switch (res.deleteOptions) {
-                            case "Department":
-                                removeDept();
-                                break;
-
-                            case "Role":
-                                removeRole();
-                                break;
-
-                            case "Employee":
-                                removeEmployee();
-                                break;
-                        };
-                    };
-
-                };
-
-            async function removeDept() {
-                connection.query(`SELECT * FROM department`,)
-                await prompt({
-                    name: "deptRemoval",
-                    message: "What department is beig removed?",
-                    type: "list",
-                    choices: department
-                })
-
-                return connection.query(`DELETE FROM department where department_name = "${res.deptRemoval}"`);
-
-                async function removeRole() {
-                    connection.query(`SELECT * FROM role`,)
-                    await prompt({
-                        name: "roleRemoval",
-                        message: "Which role do you wanna remove ?",
-                        type: "list",
-                        choices: role
-                    })
-                    return connection.query(`DELETE FROM role where title = "${res.roleRemoval}"`)
-                };
-
-                async function removeEmployee() {
-                    connection.query(`SELECT * FROM employee`,)
-                    await prompt({
-                        name: "employeeRemoval",
-                        message: "Which employee is being removed?",
-                        type: "list",
-                        choices: employee
-                    })
-                };
+async function removeEmployee() {
+    connection.query(`SELECT * FROM employee`,)
+    await prompt({
+        name: "employeeRemoval",
+        message: "Which employee is being removed?",
+        type: "list",
+        choices: employee
+    })
+};
