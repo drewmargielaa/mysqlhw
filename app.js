@@ -6,10 +6,13 @@ const connection = mysql.createConnection({
     port: 3306,
     user: "root",
     password: "rootpass",
-    database: "employee-tracker"
+    database: "employee_tracker"
 });
 
+connection.connect();
+
 connection.query = util.promisify(connection.query);
+
 
 startApp();
 

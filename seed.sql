@@ -1,19 +1,20 @@
-insert into department(name)
-values( "Payroll"),
+use employee_tracker;
+insert into department (name)
+values ( "Payroll"),
 ( "Dev"),
 ( "IT");
 
 
-insert into role(title, salary, department_id)
-values("Accountant", 45000.00, 1),
+insert into role (title, salary, department_id)
+values ("Accountant", 45000.00, 1),
 ("Admin", 55000.00, 1),
 ("Sr. Developer", 75000.00, 2),
 ("Jr. Developer", 60000.00, 2),
 ("Server Technichen", 65000.00, 3),
 ("It Ops", 50000,3);
 
-insert into employee(first_name, last_name, role_id)
-values("Andrew", "Souza", 1),
+insert into employee (first_name, last_name, role_id)
+values ("Andrew", "Souza", 1),
 ("Bobby ", "Shmurda", 2),
 ("tom ", "cruise", 3),
 ("travis", "scott", 4),
